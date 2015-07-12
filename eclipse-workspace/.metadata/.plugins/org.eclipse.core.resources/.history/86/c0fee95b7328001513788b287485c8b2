@@ -1,0 +1,45 @@
+Helpers
+	any_charactar = [0 .. 0xffff] ;
+	letter = [['a' .. 'z'] + ['A' .. 'Z']] ;
+	digit = ['0' .. '9'] ;
+	str_character = (letter|digit|'_'|','|' ;'|':'|'.')* ;
+	a = 'a' | 'A' ;
+	b =	'b' | 'B' ;
+	d =	'd' | 'D' ;
+	e =	'e' | 'E' ;
+	g =	'g' | 'g' ;
+	i =	'i' | 'I' ;
+	l =	'l' | 'L' ;
+	m =	'm' | 'M' ;
+	n =	'n' | 'N' ;
+	o =	'o' | 'O' ;
+	p =	'p' | 'P' ;
+	r =	'r' | 'R' ;
+	t =	't' | 'T' ;
+	v =	'v' | 'V' ;
+	w =	'w' | 'W' ;
+	cr = 13 ; ⁄⁄ carriage return
+	lf = 10 ; ⁄⁄ line feed
+	tab = 9 ; ⁄⁄ tab char
+	ascii_char = [32 .. 127] ;
+	blank = '' ;
+	digit = ['0' .. '9'] ;
+	letter = [['a' .. 'z'] + ['A' .. 'Z']] ;
+	l_brace = '{' ;
+	r_brace = '}' ;
+	l_paren_star = '(*' ;
+	r_paren_star = '*)' ;
+
+Tokens
+	comment = ('⁄⁄' any_character* '\n') | ('/*' + any_character* + '*/') ;
+	blank = (' ' | 10 | 13 | 9)*;
+	identifier = (letter | '_')* + (letter | '_' | digit)* ;
+	
+	integer = digit+;
+	float = digit+ + '.' + digit+ ;
+	bool = (t r u e) | (f a l s e) ;
+	string = '"' + str_character + '"' ;
+
+Ignored Tokens
+	comment ;
+	blank ;
