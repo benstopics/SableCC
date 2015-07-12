@@ -68,19 +68,3 @@ Tokens
 Ignored Tokens
 	comment ;
 	blank ;
-	
-Abstract Parse Tree
-	// http://www.natpryce.com/articles/000531.html
-	expr {-> expr} =
-	    {add} [left]:expr add [right]:factor  {-> New expr.add(left.expr, right.expr)}
-	  | {sub} [left]:expr sub [right]:factor  {-> New expr.sub(left.expr, right.expr)}
-	  | {factor} factor                       {-> factor.expr};
-	
-	factor {-> expr} =
-	    {mul} [left]:factor mul [right]:value {-> New expr.mul(left.expr, right.expr)}
-	  | {div} [left]:factor div [right]:value {-> New expr.div(left.expr, right.expr)}
-	  | {value} value                         {-> value.expr};
-	
-	value {-> expr} =
-	    {number} number                       {-> New expr.number(number)}
-	  | {parens} left_paren expr right_paren  {-> expr.expr};

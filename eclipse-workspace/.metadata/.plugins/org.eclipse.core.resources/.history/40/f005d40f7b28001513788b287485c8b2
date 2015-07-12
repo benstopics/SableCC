@@ -70,7 +70,6 @@ Ignored Tokens
 	blank ;
 	
 Abstract Parse Tree
-	// http://www.natpryce.com/articles/000531.html
 	expr {-> expr} =
 	    {add} [left]:expr add [right]:factor  {-> New expr.add(left.expr, right.expr)}
 	  | {sub} [left]:expr sub [right]:factor  {-> New expr.sub(left.expr, right.expr)}
