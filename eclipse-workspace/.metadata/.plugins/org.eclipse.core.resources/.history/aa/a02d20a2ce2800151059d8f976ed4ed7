@@ -1,0 +1,61 @@
+Helpers
+	any_charactar = [0 .. 0xffff] ;
+	letter = [['a' .. 'z'] + ['A' .. 'Z']] ;
+	digit = ['0' .. '9'] ;
+
+Tokens
+	comment = ('⁄⁄' any_character* '\n') | ('/*' + any_character* + '*/') ;
+	blank = (' ' | 10 | 13 | 9)*;
+	identifier = (letter | '_')* + (letter | '_' | digit)* ;
+	
+	int_val = digit+;
+	float_val = digit+ + '.' + digit+ ;
+	bool_val = true | false ;
+	str_val = '"' + (letter|digit|'_'|','|';'|':'|'.'|'\'')* + '"' ;
+	
+	str_value =  ;
+	colon = ':' ;
+	semicolon = ';' ;
+	comma = ',' ;
+	plus = '+' ;
+	minus = '-' ;
+	mul = '*' ;
+	fwd_slash = '/' ;
+	l_paren = '(' ;
+	r_paren = ')' ;
+	lt = '<' ;
+	lteq = '<=' ;
+	gt = '>' ;
+	gteq = '>=' ;
+	neq = '!=' ;
+	eq = '=' ;
+	assign = ':=' ;
+	l_brack = '{' ;
+	r_brack = '}' ;
+	
+	true = 'true' ;
+	false = 'false' ;
+	string = 'string' ;
+	integer = 'integer' ;
+	for = 'for' ;
+	bool = 'bool' ;
+	float = 'float' ;
+	global = 'global' ;
+	not = 'not' ;
+	in = 'in' ;
+	program = 'program' ;
+	out = 'out' ;
+	procedure = 'procedure' ;
+	if = 'if' ;
+	begin = 'begin' ;
+	then = 'then' ;
+	return = 'return' ;
+	else = 'else' ;
+	end = 'end' ;
+
+Ignored Tokens
+	comment ;
+	blank ;
+	
+Productions
+	destination = 

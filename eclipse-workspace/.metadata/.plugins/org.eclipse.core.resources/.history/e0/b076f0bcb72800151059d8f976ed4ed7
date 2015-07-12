@@ -1,0 +1,86 @@
+Helpers
+	any_charactar = [0 .. 0xffff] ;
+	letter = [['a' .. 'z'] + ['A' .. 'Z']] ;
+	digit = ['0' .. '9'] ;
+	str_character = (letter|digit|'_'|','|';'|':'|'.')* ;
+	a = 'a' | 'A' ;
+	b =	'b' | 'B' ;
+	d =	'd' | 'D' ;
+	e =	'e' | 'E' ;
+	g =	'g' | 'g' ;
+	i =	'i' | 'I' ;
+	l =	'l' | 'L' ;
+	m =	'm' | 'M' ;
+	n =	'n' | 'N' ;
+	o =	'o' | 'O' ;
+	p =	'p' | 'P' ;
+	r =	'r' | 'R' ;
+	t =	't' | 'T' ;
+	v =	'v' | 'V' ;
+	w =	'w' | 'W' ;
+	colon = ':' ;
+	semicolon = ';' ;
+	comma = ',' ;
+	plus = '+' ;
+	minus = '-' ;
+	mul = '*' ;
+	fwd_slash = '/' ;
+	l_paren = '(' ;
+	r_paren = ')' ;
+	lt = '<' ;
+	lteq = '<=' ;
+	gt = '>' ;
+	gteq = '>=' ;
+	neq = '!=' ;
+	eq = '=' ;
+	assign = ':=' ;
+	l_brack = '{' ;
+	r_brack = '}' ;
+
+Tokens
+	comment = ('⁄⁄' any_character* '\n') | ('/*' + any_character* + '*/') ;
+	blank = (' ' | 10 | 13 | 9)*;
+	identifier = (letter | '_')* + (letter | '_' | digit)* ;
+	
+	integer = digit+;
+	float = digit+ + '.' + digit+ ;
+	bool = (t r u e) | (f a l s e) ;
+	string = '"' + str_character + '"' ;
+	
+	keyword_string = s t r i n g ;
+	keyword_int = i n t ;
+	keyword_for = f o r ;
+	keyword_bool = b o o l ;
+	keyword_float = f l o a t ;
+	keyword_global = g l o b a l ;
+	keyword_not = n o t ;
+	keyword_in = i n ;
+	keyword_program = p r o g r a m ;
+	keyword_out = o u t ;
+	keyword_procedure = p r o c e d u r e ;
+	keyword_if = i f ;
+	keyword_begin = b e g i n ;
+	keyword_then = t h e n ;
+	keyword_return = r e t u r n ;
+	keyword_else = e l s e ;
+	keyword_end = e n d ;
+
+Ignored Tokens
+	comment ;
+	blank ;
+	
+Abstract Parse Tree
+	// http://www.natpryce.com/articles/000531.html
+	expr {-> expr} =
+	    {add} [left]:expr add [right]:factor  {-> New expr.add(left.expr, right.expr)}
+	  | {sub} [left]:expr sub [right]:factor  {-> New expr.sub(left.expr, right.expr)}
+	  | {factor} factor                       {-> factor.expr};
+	
+	factor {-> expr} =
+	    {mul} [left]:factor mul [right]:value {-> New expr.mul(left.expr, right.expr)}
+	  | {div} [left]:factor div [right]:value {-> New expr.div(left.expr, right.expr)}
+	  | {value} value                         {-> value.expr};
+	
+	value {-> expr} =
+	    {number} number                       {-> New expr.number(number)}
+	  | {parens} left_paren expr right_paren  {-> expr.expr};

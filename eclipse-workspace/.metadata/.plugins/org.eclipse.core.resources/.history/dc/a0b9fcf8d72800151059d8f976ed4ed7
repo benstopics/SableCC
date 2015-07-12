@@ -1,0 +1,85 @@
+Helpers
+	any_charactar = [0 .. 0xffff] ;
+	letter = [['a' .. 'z'] + ['A' .. 'Z']] ;
+	digit = ['0' .. '9'] ;
+
+Tokens
+	comment = ('⁄⁄' any_character* '\n') | ('/*' + any_character* + '*/') ;
+	blank = (' ' | 10 | 13 | 9)*;
+	identifier = (letter | '_')* + (letter | '_' | digit)* ;
+	
+	int_val = digit+;
+	float_val = digit+ + '.' + digit+ ;
+	bool_val = true | false ;
+	str_val = '"' + (letter|digit|'_'|','|';'|':'|'.'|'\'')* + '"' ;
+	
+	colon = ':' ;
+	semicolon = ';' ;
+	comma = ',' ;
+	or = '|' ;
+	and = '&' ;
+	plus = '+' ;
+	minus = '-' ;
+	mul = '*' ;
+	div = '/' ;
+	l_paren = '(' ;
+	r_paren = ')' ;
+	lt = '<' ;
+	lteq = '<=' ;
+	gt = '>' ;
+	gteq = '>=' ;
+	neq = '!=' ;
+	eq = '=' ;
+	assign = ':=' ;
+	l_brack = '[' ;
+	r_brack = ']' ;
+	
+	true = 'true' ;
+	false = 'false' ;
+	string = 'string' ;
+	integer = 'integer' ;
+	for = 'for' ;
+	bool = 'bool' ;
+	float = 'float' ;
+	global = 'global' ;
+	not = 'not' ;
+	in = 'in' ;
+	program = 'program' ;
+	out = 'out' ;
+	procedure = 'procedure' ;
+	if = 'if' ;
+	begin = 'begin' ;
+	then = 'then' ;
+	return = 'return' ;
+	else = 'else' ;
+	end = 'end' ;
+
+Ignored Tokens
+	comment ;
+	blank ;
+	
+Productions
+
+	expr {-> expr} =
+		{or} [left]:expr or [right]:arithop {-> New expr.add(left.expr, right.expr)}
+	  |	{and} [left]:expr and [right]:arithop {-> New expr.sub(left.expr, right.expr)}
+	  | {arithop} not? arithop {-> New expr.arithop(not,arithop) };
+	
+	expr {-> expr} =
+		{add} [left]:expr add [right]:factor {-> New expr.add(left.expr, right.expr)}
+	  |	{sub} [left]:expr sub [right]:factor {-> New expr.sub(left.expr, right.expr)}
+	  | {factor} factor {-> factor.expr};
+	
+	factor {-> expr} =
+	    {mul} [left]:factor mul [right]:value {-> New expr.mul(left.expr, right.expr)}
+	  | {div} [left]:factor div [right]:value {-> New expr.div(left.expr, right.expr)}
+	  | {value} value {-> value.expr};
+	
+	factor {-> expr} =
+		{parens} left_paren expr right_paren {-> expr.expr};
+	  |	{number} number {-> New expr.number(number)}
+	  | 
+	
+	name {-> name } =
+		| {element} identifier l_brack expr r_brack {-> New name.element(identifier,expr) } ;
+		| {var} identifier {-> name.var(identifier) } ;

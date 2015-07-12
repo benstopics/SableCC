@@ -2,29 +2,26 @@ Helpers
 	any_charactar = [0 .. 0xffff] ;
 	letter = [['a' .. 'z'] + ['A' .. 'Z']] ;
 	digit = ['0' .. '9'] ;
-	str_character = (letter|digit|'_'|','|';'|':'|'.')* ;
-	a = 'a' | 'A' ;
-	b =	'b' | 'B' ;
-	d =	'd' | 'D' ;
-	e =	'e' | 'E' ;
-	g =	'g' | 'g' ;
-	i =	'i' | 'I' ;
-	l =	'l' | 'L' ;
-	m =	'm' | 'M' ;
-	n =	'n' | 'N' ;
-	o =	'o' | 'O' ;
-	p =	'p' | 'P' ;
-	r =	'r' | 'R' ;
-	t =	't' | 'T' ;
-	v =	'v' | 'V' ;
-	w =	'w' | 'W' ;
+
+Tokens
+	comment = ('⁄⁄' any_character* '\n') | ('/*' + any_character* + '*/') ;
+	blank = (' ' | 10 | 13 | 9)*;
+	identifier = (letter | '_')* + (letter | '_' | digit)* ;
+	
+	int_val = digit+;
+	float_val = digit+ + '.' + digit+ ;
+	bool_val = true | false ;
+	str_val = '"' + (letter|digit|'_'|','|';'|':'|'.'|'\'')* + '"' ;
+	
 	colon = ':' ;
 	semicolon = ';' ;
 	comma = ',' ;
+	or = '|' ;
+	and = '&' ;
 	plus = '+' ;
 	minus = '-' ;
 	mul = '*' ;
-	fwd_slash = '/' ;
+	div = '/' ;
 	l_paren = '(' ;
 	r_paren = ')' ;
 	lt = '<' ;
@@ -34,53 +31,55 @@ Helpers
 	neq = '!=' ;
 	eq = '=' ;
 	assign = ':=' ;
-	l_brack = '{' ;
-	r_brack = '}' ;
-
-Tokens
-	comment = ('⁄⁄' any_character* '\n') | ('/*' + any_character* + '*/') ;
-	blank = (' ' | 10 | 13 | 9)*;
-	identifier = (letter | '_')* + (letter | '_' | digit)* ;
+	l_brack = '[' ;
+	r_brack = ']' ;
 	
-	integer = digit+;
-	float = digit+ + '.' + digit+ ;
-	bool = (t r u e) | (f a l s e) ;
-	string = '"' + str_character + '"' ;
-	
-	keyword_string = s t r i n g ;
-	keyword_int = i n t ;
-	keyword_for = f o r ;
-	keyword_bool = b o o l ;
-	keyword_float = f l o a t ;
-	keyword_global = g l o b a l ;
-	keyword_not = n o t ;
-	keyword_in = i n ;
-	keyword_program = p r o g r a m ;
-	keyword_out = o u t ;
-	keyword_procedure = p r o c e d u r e ;
-	keyword_if = i f ;
-	keyword_begin = b e g i n ;
-	keyword_then = t h e n ;
-	keyword_return = r e t u r n ;
-	keyword_else = e l s e ;
-	keyword_end = e n d ;
+	true = 'true' ;
+	false = 'false' ;
+	string = 'string' ;
+	integer = 'integer' ;
+	for = 'for' ;
+	bool = 'bool' ;
+	float = 'float' ;
+	global = 'global' ;
+	not = 'not' ;
+	in = 'in' ;
+	program = 'program' ;
+	out = 'out' ;
+	procedure = 'procedure' ;
+	if = 'if' ;
+	begin = 'begin' ;
+	then = 'then' ;
+	return = 'return' ;
+	else = 'else' ;
+	end = 'end' ;
 
 Ignored Tokens
 	comment ;
 	blank ;
 	
-Abstract Parse Tree
-	// http://www.natpryce.com/articles/000531.html
+Productions
+
 	expr {-> expr} =
-	    {add} [left]:expr add [right]:factor  {-> New expr.add(left.expr, right.expr)}
-	  | {sub} [left]:expr sub [right]:factor  {-> New expr.sub(left.expr, right.expr)}
-	  | {factor} factor                       {-> factor.expr};
+		{or} [left]:expr or [right]:arithop {-> New expr.add(left.expr, right.expr)}
+	  |	{and} [left]:expr and [right]:arithop {-> New expr.sub(left.expr, right.expr)}
+	  | {arithop} not? arithop {-> New expr.arithop(not,arithop) };
+	
+	arithop {-> expr} =
+		{add} [left]:arithop add [right]:relation {-> New expr.add(left.expr, right.expr)}
+	  |	{sub} [left]:arithop sub [right]:relation {-> New expr.sub(left.expr, right.expr)}
+	  | {relation} relation {-> relation.expr};
+	
+	term {-> expr} =
+	    {mul} [left]:term mul [right]:factor {-> New expr.mul(left.expr, right.expr)}
+	  | {div} [left]:term div [right]:factor {-> New expr.div(left.expr, right.expr)}
+	  | {factor} factor {-> factor.expr};
 	
 	factor {-> expr} =
-	    {mul} [left]:factor mul [right]:value {-> New expr.mul(left.expr, right.expr)}
-	  | {div} [left]:factor div [right]:value {-> New expr.div(left.expr, right.expr)}
-	  | {value} value                         {-> value.expr};
+		{parens} left_paren expr right_paren {-> expr.expr};
+	  |	{number} number {-> New expr.number(number)}
+	  | 
 	
-	value {-> expr} =
-	    {number} number                       {-> New expr.number(number)}
-	  | {parens} left_paren expr right_paren  {-> expr.expr};
+	name {-> name } =
+		| {element} identifier l_brack expr r_brack {-> New name.element(identifier,expr) } ;
+		| {var} identifier {-> name.var(identifier) } ;
