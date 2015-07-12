@@ -18,24 +18,10 @@ Helpers
 	t =	't' | 'T' ;
 	v =	'v' | 'V' ;
 	w =	'w' | 'W' ;
-	colon = ':' ;
-	semicolon = ';' ;
-	comma = ',' ;
-	plus = '+' ;
-	minus = '-' ;
-	mul = '*' ;
-	fwd_slash = '/' ;
+	l_brace = '{' ;
+	r_brace = '}' ;
 	l_paren = '(' ;
 	r_paren = ')' ;
-	lt = '<' ;
-	lteq = '<=' ;
-	gt = '>' ;
-	gteq = '>=' ;
-	neq = '!=' ;
-	eq = '=' ;
-	assign = ':=' ;
-	l_brack = '{' ;
-	r_brack = '}' ;
 
 Tokens
 	comment = ('⁄⁄' any_character* '\n') | ('/*' + any_character* + '*/') ;
