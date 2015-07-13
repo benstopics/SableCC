@@ -1,0 +1,10 @@
+Tokens
+
+	add = '+';
+	sub = '-';
+	mul = '*';
+	div = '/';
+	left_paren = '(';
+	right_paren = ')';
+	number = [0-9]+;
+	whitespace = (' ')+;
