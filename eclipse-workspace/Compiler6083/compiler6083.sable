@@ -61,6 +61,8 @@ Ignored Tokens
   
 Productions
 
+  program = expr ;
+
   expr {-> expr} =
       {or} [left]:expr or [right]:arithop {-> New expr.or(left.expr, right.expr) }
     | {and} [left]:expr and [right]:arithop {-> New expr.and(left.expr, right.expr) }
@@ -109,6 +111,8 @@ Productions
     ;
     
 Abstract Syntax Tree
+
+  program = expr ;
 
   expr =
   // Expr

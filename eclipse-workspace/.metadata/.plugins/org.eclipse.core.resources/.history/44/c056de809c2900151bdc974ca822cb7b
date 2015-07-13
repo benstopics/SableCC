@@ -1,0 +1,14 @@
+/* An interpreter for the simple math language we all espouse. */ 
+package compiler6083;
+
+import org.sablecc.sablecc.analysis.DepthFirstAdapter;
+
+import node.*;
+
+public class Interpreter extends DepthFirstAdapter { 
+	
+	@Override
+	public void caseAAddExpr(AAddExpr node) {
+		
+	}
+}

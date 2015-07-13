@@ -9,7 +9,7 @@ Helpers
   
 Tokens 
     /* Our simple token definition(s). */ 
-    integer = digit+ sp*; 
+    integer = digit+ sp*;
     plus = '+' sp*; 
     semi = ';' nl?; 
   
