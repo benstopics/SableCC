@@ -1,0 +1,3 @@
+java.lang.RuntimeException: [95,45] minus must be one of the elements on the left side of the arrow  or is already refered to in this alternative
+java.lang.RuntimeException: [95,54] production bind was never transformed to name or #name# cannot be refered by #bind# twice in the same alternative
+*type: referred

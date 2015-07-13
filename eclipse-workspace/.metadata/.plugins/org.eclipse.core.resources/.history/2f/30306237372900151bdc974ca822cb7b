@@ -1,0 +1,136 @@
+Helpers
+  any_character = [0 .. 0xffff] ;
+  letter = [['a' .. 'z'] + ['A' .. 'Z']] ;
+  digit = ['0' .. '9'] ;
+  true = 'true' ;
+  false = 'false' ;
+
+Tokens
+  comment = ('⁄⁄' any_character* '\n') | ('/*' any_character* '*/') ;
+  blank = (' ' | 10 | 13 | 9)*;
+  identifier = (letter | '_')* (letter | '_' | digit)* ;
+  
+  int_val = digit+;
+  float_val = digit+ '.' + digit+ ;
+  bool_val = true | false ;
+  str_val = '"' (letter|digit|'_'|','|';'|':'|'.'|39)* '"' ; // 39 = "'" char
+  
+  colon = ':' ;
+  semicolon = ';' ;
+  comma = ',' ;
+  or = '|' ;
+  and = '&' ;
+  add = '+' ;
+  sub = '-' ;
+  mul = '*' ;
+  div = '/' ;
+  l_paren = '(' ;
+  r_paren = ')' ;
+  lt = '<' ;
+  lteq = '<=' ;
+  gt = '>' ;
+  gteq = '>=' ;
+  neq = '!=' ;
+  eq = '=' ;
+  assign = ':=' ;
+  l_brack = '[' ;
+  r_brack = ']' ;
+  
+  string = 'string' ;
+  integer = 'integer' ;
+  for = 'for' ;
+  bool = 'bool' ;
+  float = 'float' ;
+  global = 'global' ;
+  not = 'not' ;
+  in = 'in' ;
+  program = 'program' ;
+  out = 'out' ;
+  procedure = 'procedure' ;
+  if = 'if' ;
+  begin = 'begin' ;
+  then = 'then' ;
+  return = 'return' ;
+  else = 'else' ;
+  end = 'end' ;
+
+Ignored Tokens
+  comment ,
+  blank
+  ;
+  
+Productions
+
+  expr {-> expr} =
+      {or} [left]:expr or [right]:arithop {-> New expr.or(left.expr, right.expr) }
+    | {and} [left]:expr and [right]:arithop {-> New expr.and(left.expr, right.expr) }
+    | {not} not arithop {-> New expr.not(not,arithop.expr) }
+    | {arithop} arithop {-> arithop.expr }
+    ;
+  
+  arithop {-> expr} =
+      {add} [left]:arithop add [right]:relation {-> New expr.add(left.expr, right.expr) }
+    | {sub} [left]:arithop sub [right]:relation {-> New expr.sub(left.expr, right.expr) }
+    | {relation} relation {-> relation.expr }
+    ;
+    
+  relation {-> expr} =
+      {lt} [left]:relation lt [right]:term {-> New expr.lt(left.expr, right.expr) }
+    | {gteq} [left]:relation gteq [right]:term {-> New expr.gteq(left.expr, right.expr) }
+    | {lteq} [left]:relation lteq [right]:term {-> New expr.lteq(left.expr, right.expr) }
+    | {gt} [left]:relation gt [right]:term {-> New expr.gt(left.expr, right.expr) }
+    | {eq} [left]:relation eq [right]:term {-> New expr.eq(left.expr, right.expr) }
+    | {neq} [left]:relation neq [right]:term {-> New expr.neq(left.expr, right.expr) }
+    | {term} term {-> term.expr }
+    ;
+  
+  term {-> expr} =
+      {mul} [left]:term mul [right]:factor {-> New expr.mul(left.expr, right.expr) }
+    | {div} [left]:term div [right]:factor {-> New expr.div(left.expr, right.expr) }
+    | {factor} factor {-> factor.expr }
+    ;
+  
+  factor {-> expr} =
+      {parens} l_paren expr r_paren {-> expr.expr }
+    | {signame} sub? [name]:name {-> New expr.signame(sub, bind.expr) }
+    | {signumber} sub? [number]:number {-> New expr.signumber(sub, number) }
+    | {str} str_val {-> New expr.str(str_val) }
+    | {bool} bool_val {-> New expr.bool(bool_val) }
+    ;
+  
+  name {-> expr} =
+      {element} [id]:identifier l_brack [arrayindex]:expr r_brack {-> New name.element(id,arrayindex.expr) }
+    | {var} [id]:identifier {-> New name.var(id) }
+    ;
+    
+  number {-> expr} =
+      {int} int_val {-> New expr.int(int_val) }
+    | {float} float_val {-> New expr.float(float_val) }
+    ;
+    
+Abstract Syntax Tree
+
+  expr =
+  // Expr
+      {or} [left]:expr [right]:expr
+    | {and} [left]:expr [right]:expr
+    | {not} not expr
+  // Arithop
+    | {add} [left]:expr [right]:expr
+    | {sub} [left]:expr [right]:expr
+  // Relation
+    | {lt} [left]:expr [right]:expr
+    | {gteq} [left]:expr [right]:expr
+    | {lteq} [left]:expr [right]:expr
+    | {gt} [left]:expr [right]:expr
+    | {eq} [left]:expr [right]:expr
+    | {neq} [left]:expr [right]:expr
+  // Term
+    | {mul} [left]:expr [right]:expr
+    | {div} [left]:expr [right]:expr
+  // Factor
+    | {fname} sub? [bind]:expr
+    | {fnumber} sub? number
+    | {fstr} str_val
+    | {fbool} bool_val
+    ;
